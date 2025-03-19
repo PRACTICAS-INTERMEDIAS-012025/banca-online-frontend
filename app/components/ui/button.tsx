@@ -2,7 +2,7 @@ import { Slot, Slottable } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
-import { cn } from "@/lib/utils";
+import { cn } from "~/lib/utils";
 import { Loader } from "lucide-react";
 
 const buttonVariants = cva(
@@ -18,6 +18,8 @@ const buttonVariants = cva(
           "border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground",
         secondary:
           "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
+        tertiary:
+          "bg-tertiary text-primary-foreground shadow-xs hover:bg-tertiary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
       },
@@ -60,11 +62,7 @@ function Button({
       disabled={disabled || loading}
       {...props}
     >
-      {loading ? (
-        <Loader className="animate-spin" />
-      ) : icon ? (
-        icon
-      ) : null}
+      {loading ? <Loader className="animate-spin" /> : icon ? icon : null}
       <Slottable>{children}</Slottable>
     </Comp>
   );
