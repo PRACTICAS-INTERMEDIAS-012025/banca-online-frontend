@@ -10,6 +10,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
+  
   return (
     <>
       <div className="grid place-items-center h-screen space-x-3">
