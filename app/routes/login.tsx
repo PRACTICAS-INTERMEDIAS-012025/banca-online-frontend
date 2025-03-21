@@ -16,6 +16,8 @@ import type { LoginResponse } from "~/lib/types/auth";
 import { commitSession, getSession } from "~/session";
 import type { Route } from "./+types/login";
 
+
+
 export async function action({ request }: Route.ActionArgs) {
   // const session = await getSession(request.headers.get("Cookie"));
   const session = await getSession();
