@@ -1,5 +1,23 @@
+import {
+  ArrowDownUp,
+  BellRing,
+  LayoutGrid,
+  LogOut,
+  MenuIcon,
+  Settings2,
+} from "lucide-react";
+import { Form, NavLink, Outlet, redirect } from "react-router";
 import { LogoLink } from "~/components/partials/LogoLink";
+import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 import {
   Sheet,
   SheetContent,
@@ -9,24 +27,13 @@ import {
   SheetTrigger,
 } from "~/components/ui/sheet";
 import {
-  ArrowDownUp,
-  BellRing,
-  HandCoins,
-  History,
-  LayoutGrid,
-  MenuIcon,
-  Settings2,
-} from "lucide-react";
-import { NavLink, Outlet } from "react-router";
-import { Avatar, AvatarFallback } from "~/components/ui/avatar";
-import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { commitSession, getCurrentUserData, getSession } from "~/session";
 import type { Route } from "../admin/+types/route";
-import { getCurrentUserData } from "~/session";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const userData = await getCurrentUserData(request);
@@ -34,6 +41,18 @@ export async function loader({ request }: Route.LoaderArgs) {
   return {
     userData,
   };
+}
+
+export async function action({ request }: Route.ActionArgs) {
+  const cookie = request.headers.get("cookie");
+  const session = await getSession(cookie);
+  session.unset("credentials");
+
+  return redirect("/login", {
+    headers: {
+      "Set-Cookie": await commitSession(session),
+    },
+  });
 }
 
 export default function DashboardLayout({ loaderData }: Route.ComponentProps) {
@@ -146,24 +165,56 @@ export default function DashboardLayout({ loaderData }: Route.ComponentProps) {
               </Tooltip>
             </TooltipProvider>
 
-            
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Avatar>
-                    <AvatarFallback>
-                      {loaderData.userData?.usuario.persona.nombre.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Sesión iniciada como:</p>
-                  <p className="font-bold">
-                    {loaderData.userData?.usuario.persona.nombre}
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Avatar>
+                        <AvatarFallback>
+                          {loaderData.userData?.usuario.persona.nombre.charAt(
+                            0,
+                          )}
+                        </AvatarFallback>
+                      </Avatar>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Sesión iniciada como:</p>
+                      <p className="font-bold">
+                        {loaderData.userData?.usuario.persona.nombre}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-60">
+                <DropdownMenuLabel>Mi cuenta</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <div className="px-2 py-1.5 text-sm font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-bold leading-none">
+                      {`${loaderData.userData?.usuario.persona.nombre} ${loaderData.userData?.usuario.persona.apellido}`}
+                    </p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {loaderData.userData?.usuario.email}
+                    </p>
+                  </div>
+                </div>
+                <DropdownMenuSeparator />
+                <Form method="POST">
+                  <DropdownMenuItem asChild>
+                    <Button
+                      type="submit"
+                      className="w-full font-normal"
+                      variant="ghost"
+                      icon={<LogOut />}
+                    >
+                      Cerrar sesión
+                    </Button>
+                  </DropdownMenuItem>
+                </Form>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </nav>
