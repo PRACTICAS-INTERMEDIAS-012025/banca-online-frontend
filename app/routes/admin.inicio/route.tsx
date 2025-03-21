@@ -1,15 +1,13 @@
-// import { CreditCardPreview } from "~/components/dashboard/home/CreditCardPreview";
 import { ChevronDown, ChevronUp, Wallet } from "lucide-react";
 import { AccountSelector } from "~/components/dashboard/home/AccountSelector";
 import { CardStats } from "~/components/dashboard/home/CardStats";
 import { CreditCardPreview } from "~/components/partials/CreditCardPreview";
-import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import type { Route } from "../dashboard.inicio/+types/route";
 import { requireUserSession } from "~/session";
+import type { Route } from "../admin.inicio/+types/route";
 
 export async function loader({ request }: Route.LoaderArgs) {
   await requireUserSession(request);
