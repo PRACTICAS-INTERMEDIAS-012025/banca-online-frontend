@@ -48,7 +48,6 @@ import {
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
   const body = await request.formData();
-  console.log(body);
 
   try {
     const response = await $api<any>("/usuario", {
@@ -79,24 +78,10 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
   } catch (error) {
     if (error instanceof FetchError) {
       if (error.data) {
-        // return {
-        //   error: {
-        //     statusCode: error.statusCode,
-        //     data: error.data,
-        //   },
-        // };
         toast.error(error.data.message, {
           description: "Intente nuevamente",
         });
       } else {
-        // return {
-        //   error: {
-        //     statusCode: 500,
-        //     data: {
-        //       message: "Servicio no disponible",
-        //     },
-        //   },
-        // };
         toast.error("Servicio no disponible", {
           description: "Intente nuevamente",
         });
@@ -118,7 +103,7 @@ export default function RegistroPage() {
         BanCuchus
       </div>
 
-      <Card className="w-full lg:max-w-3xl pt-9 pb-12">
+      <Card className="w-full lg:max-w-3xl pt-6 pb-5">
         <CardHeader className="space-y-2">
           <CardTitle className="text-center text-xl font-bold">
             Registrate
@@ -130,7 +115,7 @@ export default function RegistroPage() {
         <CardContent>
           <Form className="lg:px-6" method="POST">
             <h3 className="text-lg font-light my-3">Información personal</h3>
-            <fieldset className="grid grid-cols-2 gap-y-2 gap-x-5 ">
+            <fieldset className="grid grid-cols-3 gap-y-2 gap-x-5 ">
               <Input
                 type="text"
                 name="name"
@@ -173,7 +158,7 @@ export default function RegistroPage() {
                       {date ? (
                         format(date, "PPP", { locale: es })
                       ) : (
-                        <span>Pick a date</span>
+                        <span>Selecciona una fecha</span>
                       )}
                     </Button>
                   </PopoverTrigger>
@@ -226,7 +211,7 @@ export default function RegistroPage() {
             </fieldset>
 
             <h3 className="text-lg font-light my-3">Información de cuenta</h3>
-            <fieldset className="grid grid-cols-2 gap-y-2 gap-x-5 ">
+            <fieldset className="grid grid-cols-3 gap-y-2 gap-x-5 ">
               <Input
                 type="email"
                 name="email"
@@ -267,6 +252,14 @@ export default function RegistroPage() {
               </Button>
             </div>
           </Form>
+          <div className="mt-4 text-center">
+            <p className="text-sm">
+              Ya tienes una cuenta? &nbsp;
+              <NavLink to="/login" className="underline text-brand-blue">
+                Inicia sesión
+              </NavLink>
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>

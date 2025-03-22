@@ -33,7 +33,6 @@ export async function requireUserSession(request: Request) {
   const session = await getSession(cookie);
 
   // check if session has the credentials
-  console.log(session.get("credentials"));
   if (!session.has("credentials")) {
 
     // if there is no user session, redirect to login

@@ -10,7 +10,7 @@ import { requireUserSession } from "~/session";
 import type { Route } from "../admin.inicio/+types/route";
 
 export async function loader({ request }: Route.LoaderArgs) {
-  await requireUserSession(request);
+  // await requireUserSession(request);
 }
 
 export default function DashboardPage() {
@@ -37,7 +37,6 @@ export default function DashboardPage() {
             <Button
               variant="secondary"
               className="rounded-full px-2"
-              onClick={console.log}
               key={i}
             >
               NA

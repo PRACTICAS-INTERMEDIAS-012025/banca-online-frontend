@@ -32,10 +32,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { commitSession, getCurrentUserData, getSession } from "~/session";
+import { commitSession, getCurrentUserData, getSession, requireUserSession } from "~/session";
 import type { Route } from "../admin/+types/route";
 
 export async function loader({ request }: Route.LoaderArgs) {
+  await requireUserSession(request);
   const userData = await getCurrentUserData(request);
 
   return {

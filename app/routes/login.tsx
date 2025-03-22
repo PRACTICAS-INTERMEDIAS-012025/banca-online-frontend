@@ -1,6 +1,6 @@
 import { Landmark, Lock, LogIn, User2 } from "lucide-react";
 import { FetchError } from "ofetch";
-import { Form, redirect, useNavigation } from "react-router";
+import { Form, NavLink, redirect, redirectDocument, useNavigation } from "react-router";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import {
@@ -15,12 +15,12 @@ import { $api } from "~/lib/apiFetch";
 import type { LoginResponse } from "~/lib/types/auth";
 import { commitSession, getSession } from "~/session";
 import type { Route } from "./+types/login";
-
-
+import { loginRoleRedirectMappings } from "~/utils/loginRedirect";
 
 export async function action({ request }: Route.ActionArgs) {
   // const session = await getSession(request.headers.get("Cookie"));
   const session = await getSession();
+  console.log(session.data);
 
   const body = await request.formData();
   const username = body.get("username");
@@ -37,12 +37,18 @@ export async function action({ request }: Route.ActionArgs) {
     session.set("credentials", response._data);
     session.set("token", token);
 
-    return redirect("/admin/inicio", {
-      headers: {
-        "Set-Cookie": await commitSession(session),
+    return redirect(
+      loginRoleRedirectMappings[response._data?.usuario.rol.UID],
+      {
+        headers: {
+          "Set-Cookie": await commitSession(session),
+
+        },
+
       },
-    });
+    );
   } catch (error) {
+    console.log(error);
     if (error instanceof FetchError) {
       if (error.data) {
         return {
@@ -57,8 +63,8 @@ export async function action({ request }: Route.ActionArgs) {
             statusCode: 500,
             data: {
               message: "Servicio no disponible",
-            }
-          }
+            },
+          },
         };
       }
     }
@@ -129,6 +135,16 @@ export default function LoginPage({ actionData }: Route.ComponentProps) {
               </div>
             )}
           </Form>
+
+          <div className="mt-4 text-center">
+            <p className="text-sm">
+              Aun no tienes cuenta?{" "}
+              <NavLink to="/registro" className="underline text-brand-red">
+                Regístrate
+              </NavLink>
+            </p>
+          </div>
+
         </CardContent>
       </Card>
     </div>
