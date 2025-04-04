@@ -1,5 +1,4 @@
 import { ChevronDown, ChevronUp, Wallet } from "lucide-react";
-import { data } from "react-router";
 import { AccountSelector } from "~/components/dashboard/home/AccountSelector";
 import { CardStats } from "~/components/dashboard/home/CardStats";
 import { CreditCardPreview } from "~/components/partials/CreditCardPreview";
@@ -7,25 +6,14 @@ import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { getAllUserAccounts } from "~/lib/api/accounts";
-import { getCurrentUserData } from "~/session";
-import type { Route } from "../dashboard.inicio/+types/route";
+import { requireUserSession } from "~/session";
+import type { Route } from "../admin.inicio/+types/route";
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const userData = await getCurrentUserData(request);
-  if (!userData) return null;
-  const userAccounts = await getAllUserAccounts(request, {
-    userId: userData?.usuario.UID,
-  });
-
-  return {
-    userAccounts,
-  };
+  // await requireUserSession(request);
 }
 
-export default function DashboardPage({
-  loaderData
-}: Route.ComponentProps) {
+export default function DashboardPage() {
   return (
     <main className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-18">
       <section className="">
@@ -46,15 +34,25 @@ export default function DashboardPage({
         <div className="flex gap-x-3">
           {/* some mock avatars */}
           {[1, 2, 3, 4].map((i) => (
-            <Button variant="secondary" className="rounded-full px-2" key={i}>
+            <Button
+              variant="secondary"
+              className="rounded-full px-2"
+              key={i}
+            >
               NA
             </Button>
           ))}
         </div>
 
         <div className="space-y-3 mt-4">
-          <Label htmlFor="amount">Monto</Label>
-          <Input id="amount" type="number" placeholder="Q0.00" />
+          <Label htmlFor="amount" >
+            Monto
+          </Label>
+          <Input
+            id="amount"
+            type="number"
+            placeholder="Q0.00"
+          />
           <Button className="w-full">Transferir</Button>
         </div>
       </section>
@@ -93,8 +91,6 @@ export default function DashboardPage({
             </CardContent>
           </Card>
         </div>
-
-        {JSON.stringify(loaderData)}
       </section>
     </main>
   );

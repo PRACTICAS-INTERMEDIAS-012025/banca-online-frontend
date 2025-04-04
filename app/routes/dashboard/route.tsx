@@ -212,7 +212,7 @@ export default function DashboardLayout({ loaderData }: Route.ComponentProps) {
                       type="submit"
                       className="w-full font-normal"
                       variant="ghost"
-                      icon={<LogOut />}
+                      icon={LogOut}
                     >
                       Cerrar sesión
                     </Button>

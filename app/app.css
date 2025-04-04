@@ -152,3 +152,7 @@ body {
     cursor: pointer;
   }
 }
+
+.rdp-vhidden {
+  @apply hidden;
+}

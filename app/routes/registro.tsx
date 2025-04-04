@@ -16,7 +16,7 @@ import {
 import { useState } from "react";
 import { Form, NavLink, redirect, useNavigation } from "react-router";
 import { Button } from "~/components/ui/button";
-import { Calendar } from "~/components/ui/calendar";
+import { Calendar } from "~/components/ui/calendar-alt";
 import {
   Card,
   CardContent,
@@ -67,6 +67,8 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
         email: body.get("email"),
         password: body.get("password"),
         rol: 3,
+        // testing cashier role
+        // rol: 2,
       },
     });
 
@@ -150,6 +152,34 @@ export default function RegistroPage() {
                     <Button
                       variant={"outline"}
                       className={cn(
+                        "w-full mt-2 justify-start text-left font-normal",
+                        !date && "text-muted-foreground",
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {date ? (
+                        format(date, "PPP", { locale: es })
+                      ) : (
+                        <span>Elige una fecha</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent align="start" className=" w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      captionLayout="dropdown-buttons"
+                      selected={date}
+                      onSelect={setDate}
+                      fromYear={1960}
+                      toYear={2030}
+                    />
+                  </PopoverContent>
+                </Popover>
+                {/* <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
                         "w-full justify-start text-left font-normal mt-2",
                         !date && "text-muted-foreground",
                       )}
@@ -170,7 +200,7 @@ export default function RegistroPage() {
                       initialFocus
                     />
                   </PopoverContent>
-                </Popover>
+                </Popover> */}
                 {/* hidden input for date formdata value */}
                 <input
                   type="hidden"
@@ -245,7 +275,7 @@ export default function RegistroPage() {
                 size="lg"
                 type="submit"
                 className="mt-6"
-                icon={<ArrowRight />}
+                icon={ArrowRight}
                 loading={navigation.state === "submitting"}
               >
                 Continuar
