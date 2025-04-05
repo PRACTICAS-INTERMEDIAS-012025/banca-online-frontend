@@ -2,6 +2,7 @@ import type { Route } from "./+types/_index";
 import { Link } from "react-router";
 import { LogIn } from "lucide-react";
 import { Button } from "~/components/ui/button";
+import '../assets/css/styles-index.css';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -31,8 +32,7 @@ export default function Home() {
 export default function Home() {
   return (
     <>
-      <nav className="bg-gray-100 p-4"
-       style={{ position: "fixed", top: "0", left: "0", right: "0" }}
+      <nav className="bg-gray-100 p-4 nav-fixed"
       >
         <div className="container mx-auto flex justify-between items-center">
           <div className="text-2xl font-bold">BanCuchus</div>
@@ -84,8 +84,7 @@ export default function Home() {
         </main>
 
         <footer
-          className="bg-gray-200 p-4 text-center"
-          style={{ position: "fixed", bottom: "0", left: "0", right: "0" }}
+          className="bg-gray-200 p-4 text-center footer-fixed"
         >
           <p>BanCuchus tu lider financiero, te hace crecer</p>
           <p>Contacto: bancuchus_oficial@bancuchus.com</p>
