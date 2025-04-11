@@ -16,3 +16,26 @@ export const getAllUserAccounts = async (
     };
   }
 };
+
+export const requestNewAccount = async (
+  req: Request,
+  data: { id: number, tipoCuenta: string }
+) => {
+  try {
+    const response = await $api(
+      `/cuenta/${data.id}`, // Endpoint para solicitar cuenta
+      {
+        method: "POST",
+        body: JSON.stringify(data),
+      },
+      req
+    );
+    return response;
+  } catch (error) {
+    console.error("Error requesting account:", error);
+    return {
+      error: true,
+      message: error instanceof Error ? error.message : "Unknown error"
+    };
+  }
+};

@@ -114,7 +114,6 @@ export default function LoginPage({ actionData }: Route.ComponentProps) {
               <Button
                 type="submit"
                 className="w-full mt-6"
-                icon={<LogIn />}
                 loading={navigation.state === "submitting"}
               >
                 Iniciar sesión
