@@ -1,5 +1,5 @@
 import { Landmark, Lock, LogIn, User2 } from "lucide-react";
-import { FetchError } from "ofetch";
+import { $fetch, FetchError } from "ofetch";
 import { Form, NavLink, redirect, redirectDocument, useNavigation } from "react-router";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
@@ -26,7 +26,7 @@ export async function action({ request }: Route.ActionArgs) {
   const username = body.get("username");
   const password = body.get("password");
   try {
-    const response = await $api.raw<LoginResponse>("/login", {
+    const response = await $fetch.raw<LoginResponse>(`${import.meta.env.VITE_API_BASE_URL}/login`, {
       method: "POST",
       body: {
         username,
@@ -114,7 +114,6 @@ export default function LoginPage({ actionData }: Route.ComponentProps) {
               <Button
                 type="submit"
                 className="w-full mt-6"
-                icon={<LogIn />}
                 loading={navigation.state === "submitting"}
               >
                 Iniciar sesión

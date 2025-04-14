@@ -58,7 +58,7 @@ export async function action({ request }: Route.ActionArgs) {
 
 export default function DashboardLayout({ loaderData }: Route.ComponentProps) {
   const menuItems = [
-    { label: "Administración", icon: LayoutGrid, href: "/admin/inicio" },
+    { label: "Cajero", icon: LayoutGrid, href: "/cajero/inicio" },
     {
       label: "Usuarios",
       icon: ArrowDownUp,
