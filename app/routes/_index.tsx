@@ -42,7 +42,7 @@ export default function Home() {
             </li>
           </ul>
           <div className="flex space-x-2">
-            <Button icon={<LogIn />} variant="outline">
+            <Button icon={LogIn} variant="outline">
               <a href="/login">Iniciar sesión</a>
             </Button>
             <Button>
