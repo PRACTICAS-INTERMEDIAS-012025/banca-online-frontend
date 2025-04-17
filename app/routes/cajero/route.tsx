@@ -1,7 +1,7 @@
 import {
   ArrowDownUp,
   BellRing,
-  LayoutGrid,
+  LayoutGrid,LayoutList,
   LogOut,
   MenuIcon,
   Settings2,
@@ -62,7 +62,15 @@ export default function DashboardLayout({ loaderData }: Route.ComponentProps) {
     {
       label: "Usuarios",
       icon: ArrowDownUp,
-      href: "/dashboard/transacciones",
+      href: "",
+    },{
+      label: "Solicitudes",
+      icon: LayoutGrid,
+      href: "/cajero/solicitudescuentas",
+    },{
+      label: "Deposito/Debito",
+      icon: LayoutList,
+      href: "",
     },
   ];
 

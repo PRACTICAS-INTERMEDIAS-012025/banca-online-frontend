@@ -59,7 +59,6 @@ export default function DashboardPage() {
       <section>
         <h2 className="font-bold pb-4 flex justify-between items-center">
           General
-          <AccountSelector />
         </h2>
 
         <div className="grid grid-cols-3 gap-6">
