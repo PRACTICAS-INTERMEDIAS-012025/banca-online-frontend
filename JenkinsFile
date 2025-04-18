@@ -1,0 +1,69 @@
+pipeline {
+    agent any
+    environment {
+        DOCKER_IMAGE = "banca_frontend"
+        DOCKER_CREDENTIALS = 'docker-pass'
+        DOCKER_USERNAME = 'luisbaquiax'
+    }
+    stages {
+        stage('Clonar repositorio') {
+            steps {
+                script {
+                    checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: '*/develop']],
+                        userRemoteConfigs: [[
+                            url: 'https://github.com/PRACTICAS-INTERMEDIAS-012025/banca-online-frontend.git',
+                            credentialsId: 'github-token'
+                        ]]
+                    ])
+                }
+            }
+        }
+        
+        stage('Login to Docker') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'docker-pass', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        bat "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
+                    }
+                }
+            }
+        }
+
+        stage('Preparar archivo .env') {
+            steps {
+                withCredentials([string(credentialsId: 'api_url', variable: 'API_URL')]) {
+                    writeFile file: '.env', text: "VITE_API_BASE_URL=${API_URL}"
+                }
+            }
+        }        
+
+         stage('Build Docker Image') {
+            steps {
+                script {
+                    bat "docker build -t ${DOCKER_IMAGE}:${BUILD_NUMBER} ."
+                }
+            }
+        }
+        stage('Push Docker Image to Docker Hub') {
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS) {
+                        bat "docker tag ${DOCKER_IMAGE}:${BUILD_NUMBER} ${DOCKER_USERNAME}/${DOCKER_IMAGE}:${BUILD_NUMBER}"
+                        bat "docker push ${DOCKER_USERNAME}/${DOCKER_IMAGE}:${BUILD_NUMBER}"
+                    }
+                }
+            }
+        }
+        
+         stage('Run container') {
+            steps {
+                script {
+                    bat "docker run -d -p 3000:3000 --name banca-frontend-${BUILD_NUMBER} ${DOCKER_USERNAME}/${DOCKER_IMAGE}:${BUILD_NUMBER}"
+                }
+            }
+        }
+       
+    }
+}
