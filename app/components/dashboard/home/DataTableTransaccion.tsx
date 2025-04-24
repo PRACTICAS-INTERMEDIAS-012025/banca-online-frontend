@@ -1,24 +1,10 @@
 import { Button } from "~/components/ui/button";
 
-interface DataTableProps {
-  data: Array<{
-    UID: number;
-    numero: number;
-    saldo: string;
-    creacion: string;
-    tipoCuenta: number;
-    usuario: number;
-    estado: string;
-  }>;
-  onAccept: (uid: number) => void;
-  onReject: (uid: number) => void;
-}
-
-export function DataTable({ data, onAccept, onReject }: DataTableProps) {
+export function DataTable({ data }: { data: any[] }) {
   if (data.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">No hay solicitudes pendientes</p>
+        <p className="text-muted-foreground">No se encontraron transacciones</p>
       </div>
     );
   }
@@ -29,53 +15,39 @@ export function DataTable({ data, onAccept, onReject }: DataTableProps) {
         <thead className="bg-gray-50">
           <tr>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              ID Usuario
+              Fecha
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Número de Cuenta
+              Monto
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Tipo de Cuenta
+              Cuenta Origen
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Fecha de Creación
+              Cuenta Destino
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Acciones
+              Tipo
             </th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
           {data.map((item) => (
-            <tr key={item.UID}>
+            <tr key={item.id}>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {item.usuario}
+                {item.fecha}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                {item.numero}
+                ${item.monto.toFixed(2)}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {item.tipoCuenta === 1 ? 'Monetaria' : 'Ahorros'}
+                {item.cuentaOrigen}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {new Date(item.creacion).toLocaleDateString()}
+                {item.cuentaDestino}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                <Button 
-                  className="mr-2" 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => onAccept(item.UID)}
-                >
-                  Aceptar
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => onReject(item.UID)}
-                >
-                  Rechazar
-                </Button>
+                {item.tipo}
               </td>
             </tr>
           ))}

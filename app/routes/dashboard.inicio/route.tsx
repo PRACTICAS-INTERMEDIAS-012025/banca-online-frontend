@@ -32,7 +32,7 @@ export default function DashboardPage({
   const [selectedAccount, setSelectedAccount] = useState<Cuenta | null>(null);
   const [accounts, setAccounts] = useState<Cuenta[]>([]);
 
-  // Inicializar con los datos del loader
+
   useEffect(() => {
     if (loaderData?.userAccounts) {
       setAccounts(loaderData.userAccounts);
@@ -102,7 +102,7 @@ export default function DashboardPage({
           General
           <AccountSelector 
             onAccountSelect={setSelectedAccount}
-            userId={loaderData?.userId || 1} // Usar el ID del loader o un valor por defecto
+            userId={loaderData?.userId || 1} 
             initialAccounts={accounts}
           />
         </h2>
