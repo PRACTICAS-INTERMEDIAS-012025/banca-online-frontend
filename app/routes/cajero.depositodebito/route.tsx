@@ -3,59 +3,99 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "~/com
 import { DataTable } from "~/components/dashboard/home/DataTableTransaccion";
 import { SearchBar } from "~/components/dashboard/home/SearchBar";
 import type { Route } from "../admin.inicio/+types/route";
+import { requireUserSession } from "~/session";
+import { Button } from "~/components/ui/button";
+
+interface Transaccion {
+  id: number;
+  fecha: string;
+  monto: number;
+  cuentaOrigen: string;
+  cuentaDestino: string;
+  tipo_transaccion: string;
+}
 
 export async function loader({ request }: Route.LoaderArgs) {
-  // await requireUserSession(request);
+  await requireUserSession(request);
+  return null;
 }
 
 export default function TransactionsPage() {
   const [searchTerm, setSearchTerm] = React.useState("");
-  
-  // Datos de ejemplo para transacciones
-  const [data, setData] = React.useState<any[]>([]);
-  
+  const [data, setData] = React.useState<Transaccion[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+
   const handleSearch = (term: string) => {
     setSearchTerm(term);
   };
-  
+
+  const fetchTransacciones = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await fetch('http://localhost:3003/transaccion/');
+      
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+      
+      const transacciones = await response.json();
+      
+      const normalizedData = transacciones.map((t: any) => ({
+        ...t,
+        cuentaOrigen: t.cuenta1?.toString() || '',
+        cuentaDestino: t.cuenta2?.toString() || '',
+        fecha: t.fecha ? new Date(t.fecha).toISOString() : '',
+        tipo_transaccion: t.tipo_transaccion?.toString() || ''
+      }));
+      
+      setData(normalizedData);
+    } catch (err) {
+      console.error("Error fetching transactions:", err);
+      setError(err instanceof Error ? err.message : "Error desconocido");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   React.useEffect(() => {
-    // Datos de ejemplo para transacciones
-    const mockTransactions = [
-      { 
-        id: 1, 
-        fecha: "2023-05-15", 
-        monto: 1500.50, 
-        cuentaOrigen: "123456789", 
-        cuentaDestino: "987654321",
-        tipo: "Transferencia"
-      },
-      { 
-        id: 2, 
-        fecha: "2023-05-16", 
-        monto: 250.75, 
-        cuentaOrigen: "555555555", 
-        cuentaDestino: "123456789",
-        tipo: "Depósito"
-      },
-      { 
-        id: 3, 
-        fecha: "2023-05-17", 
-        monto: 1000.00, 
-        cuentaOrigen: "987654321", 
-        cuentaDestino: "555555555",
-        tipo: "Transferencia"
-      },
-    ];
-    
-    setData(mockTransactions);
+    fetchTransacciones();
   }, []);
 
-  const filteredData = data.filter(item =>
-    item.cuentaOrigen.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.cuentaDestino.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.tipo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.fecha.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredData = data.filter(item => {
+    const searchTermLower = searchTerm.toLowerCase();
+    return (
+      item.cuentaOrigen.toLowerCase().includes(searchTermLower) ||
+      item.cuentaDestino.toLowerCase().includes(searchTermLower) ||
+      item.tipo_transaccion.toLowerCase().includes(searchTermLower) ||
+      item.fecha.toLowerCase().includes(searchTermLower)
+    );
+  });
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-muted-foreground">Cargando transacciones...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-red-500">{error}</p>
+        <Button 
+          variant="outline" 
+          onClick={fetchTransacciones}
+          className="ml-4"
+        >
+          Reintentar
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <main className="">

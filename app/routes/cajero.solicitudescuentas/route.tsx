@@ -8,6 +8,7 @@ import { Label } from "~/components/ui/label";
 import { requireUserSession } from "~/session";
 import type { Route } from "../admin.inicio/+types/route";
 import { Button } from "~/components/ui/button";
+import type { CuentaAceptar } from "~/lib/types/auth";
 import {
   Card,
   CardContent,
@@ -23,15 +24,6 @@ import {
   DialogTitle,
 } from "~/components/ui/dialog";
 // Definimos el tipo para los datos de la cuenta
-interface Cuenta {
-  UID: number;
-  numero: number;
-  saldo: string;
-  creacion: string;
-  tipoCuenta: number;
-  usuario: number;
-  estado: string;
-}
 
 export async function loader({ request }: Route.LoaderArgs) {
   await requireUserSession(request);
@@ -39,7 +31,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 export default function DashboardPage() {
   const [searchTerm, setSearchTerm] = React.useState("");
-  const [data, setData] = React.useState<Cuenta[]>([]);
+  const [data, setData] = React.useState<CuentaAceptar[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = React.useState(false);
@@ -51,7 +43,7 @@ export default function DashboardPage() {
   const fetchCuentasPendientes = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3003/cuenta/getCuentasByEstado/pendiente');
+      const response = await fetch('http://localhost:3003/cuenta/getCuentasUsuarioByEstado/pendiente');
       
       if (!response.ok) {
         throw new Error(`Error al obtener datos: ${response.statusText}`);
@@ -79,11 +71,17 @@ export default function DashboardPage() {
   };
 
   // Filtrar datos basados en el término de búsqueda
-  const filteredData = data.filter(item =>
-    item.numero.toString().includes(searchTerm) ||
-    item.usuario.toString().includes(searchTerm) ||
-    (item.tipoCuenta === 1 ? 'Monetaria' : 'Ahorros').toLowerCase().includes(searchTerm.toLowerCase())
-  );
+
+
+// Actualiza el filtrado de datos
+const filteredData = data.filter(item =>
+  item.numero.toString().includes(searchTerm) ||
+  item.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  item.apellido.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  item.dPi.includes(searchTerm) ||
+  (item.tipoCuenta === 1 ? 'Monetaria' : 'Ahorros').toLowerCase().includes(searchTerm.toLowerCase())
+);
 
   const updateAccountStatus = async (uid: number, nuevoEstado: 'aprobado' | 'rechazado') => {
     try {
@@ -147,7 +145,7 @@ export default function DashboardPage() {
     
     try {
       setLoading(true);
-      const nuevoEstado = currentAction === "accept" ? "aprobado" : "rechazado";
+      const nuevoEstado = currentAction === "accept" ? "activa" : "inactiva";
       const response = await fetch(`http://localhost:3003/cuenta/updateEstado/${currentUID}`, {
         method: 'PUT',
         headers: {
