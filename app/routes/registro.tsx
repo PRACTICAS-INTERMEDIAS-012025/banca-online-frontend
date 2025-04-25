@@ -271,7 +271,7 @@ export default function RegistroPage() {
 
             <div className="mx-auto w-min">
               <Button
-                variant="tertiary"
+                variant="destructive"
                 size="lg"
                 type="submit"
                 className="mt-6"

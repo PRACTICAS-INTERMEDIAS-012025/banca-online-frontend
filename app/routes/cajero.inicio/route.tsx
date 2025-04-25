@@ -126,13 +126,13 @@ export default function DashboardPage() {
                 icon={User}
                 autoComplete="name"
                 required
-                label="Nombre"
+                label="Nombre (*)"
               />
 
               <Input
                 type="text"
                 name="lastname"
-                label="Apellido"
+                label="Apellido (*)"
                 icon={User}
                 autoComplete="lastname"
                 required
@@ -144,11 +144,11 @@ export default function DashboardPage() {
                 rootClassName="col-span-2 sm:col-span-1"
                 autoComplete="dpi"
                 required
-                label="DPI"
+                label="DPI (*)"
               />
 
               <div>
-                <Label className="">Fecha de nacimiento</Label>
+                <Label className="">Fecha de nacimiento (*)</Label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
@@ -216,18 +216,18 @@ export default function DashboardPage() {
                 name="address"
                 icon={MapPin}
                 required
-                label="Dirección"
+                label="Dirección (*)"
               />
               <Input
                 type="text"
                 name="phone"
                 icon={PhoneCall}
                 required
-                label="Teléfono"
+                label="Teléfono (*)"
               />
 
               <div>
-                <Label className="my-2 block">Género</Label>
+                <Label className="my-2 block">Género (*)</Label>
                 <Select name="gender">
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Selecciona una opción" />
@@ -251,7 +251,7 @@ export default function DashboardPage() {
                 icon={AtSign}
                 autoComplete="email"
                 required
-                label="Correo"
+                label="Correo (*)"
               />
               <Input
                 type="text"
@@ -259,7 +259,7 @@ export default function DashboardPage() {
                 icon={Contact}
                 autoComplete="username"
                 required
-                label="Usuario"
+                label="Usuario (*)"
               />
               <Input
                 type="password"
@@ -267,13 +267,13 @@ export default function DashboardPage() {
                 icon={Lock}
                 autoComplete="new-password"
                 required
-                label="Contraseña"
+                label="Contraseña (*)"
               />
             </fieldset>
 
             <div className="mx-auto w-min">
               <Button
-                variant="tertiary"
+                variant="destructive"
                 size="lg"
                 type="submit"
                 className="mt-6"
