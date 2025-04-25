@@ -1,7 +1,5 @@
-// *** CORRECCIÓN PRINCIPAL: Importa Link desde react-router-dom ***
 import { Link } from "react-router-dom";
 
-// El resto de los imports de componentes UI y Lucide se mantienen igual
 import {
   Card,
   CardContent,
@@ -12,8 +10,6 @@ import {
 import { Button } from "~/components/ui/button";
 import { ArrowRightLeft, Users, Landmark } from "lucide-react";
 
-// Nota: Este componente, al ser un menú, no necesita 'loader' o 'action'
-// directamente, ni tampoco 'Form' o 'useNavigation'.
 
 export default function DashboardTransaccionesPage() {
   const transactionOptions = [
@@ -21,7 +17,7 @@ export default function DashboardTransaccionesPage() {
       title: "Transferencias Propias",
       description: "Mueve fondos entre tus propias cuentas.",
       icon: ArrowRightLeft,
-      href: "/dashboard/transacciones-internas", // Ruta de tu componente de transferencias internas
+      href: "/dashboard/transacciones-internas", 
       disabled: false,
     },
     {
@@ -40,7 +36,6 @@ export default function DashboardTransaccionesPage() {
     },
   ];
 
-  // El JSX se mantiene igual, ya que la estructura y estilos son correctos
   return (
     <div className="container mx-auto py-8 space-y-6">
       <h1 className="text-3xl font-bold tracking-tight">Transacciones</h1>
