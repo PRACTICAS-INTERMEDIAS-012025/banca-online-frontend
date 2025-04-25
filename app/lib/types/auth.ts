@@ -35,3 +35,15 @@ export interface Cuenta {
   estado: string;      
   moneda?: string;    
 }
+export interface CuentaAceptar {
+  UID: number;
+  numero: number;
+  creacion: string;
+  tipoCuenta: number;
+  estado: string;
+  username: string;
+  email: string;
+  nombre: string;
+  apellido: string;
+  dPi: string;
+}
