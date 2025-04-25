@@ -124,13 +124,13 @@ export default function RegistroPage() {
                 icon={User}
                 autoComplete="name"
                 required
-                label="Nombre"
+                label="Nombre (*)"
               />
 
               <Input
                 type="text"
                 name="lastname"
-                label="Apellido"
+                label="Apellido (*)"
                 icon={User}
                 autoComplete="lastname"
                 required
@@ -142,11 +142,11 @@ export default function RegistroPage() {
                 rootClassName="col-span-2 sm:col-span-1"
                 autoComplete="dpi"
                 required
-                label="DPI"
+                label="DPI (*)"
               />
 
               <div>
-                <Label className="">Fecha de nacimiento</Label>
+                <Label className="">Fecha de nacimiento (*)</Label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
@@ -214,18 +214,18 @@ export default function RegistroPage() {
                 name="address"
                 icon={MapPin}
                 required
-                label="Dirección"
+                label="Dirección (*)"
               />
               <Input
                 type="text"
                 name="phone"
                 icon={PhoneCall}
                 required
-                label="Teléfono"
+                label="Teléfono (*)"
               />
 
               <div>
-                <Label className="my-2 block">Género</Label>
+                <Label className="my-2 block">Género (*)</Label>
                 <Select name="gender">
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Selecciona una opción" />
@@ -249,7 +249,7 @@ export default function RegistroPage() {
                 icon={AtSign}
                 autoComplete="email"
                 required
-                label="Correo"
+                label="Correo (*)"
               />
               <Input
                 type="text"
@@ -257,7 +257,7 @@ export default function RegistroPage() {
                 icon={Contact}
                 autoComplete="username"
                 required
-                label="Usuario"
+                label="Usuario (*)"
               />
               <Input
                 type="password"
@@ -265,7 +265,7 @@ export default function RegistroPage() {
                 icon={Lock}
                 autoComplete="new-password"
                 required
-                label="Contraseña"
+                label="Contraseña (*)"
               />
             </fieldset>
 
