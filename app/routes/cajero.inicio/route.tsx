@@ -1,6 +1,12 @@
-"use client";
+import { ChevronDown, ChevronUp, Wallet } from "lucide-react";
+import { AccountSelector } from "~/components/dashboard/home/AccountSelector";
+import { CardStats } from "~/components/dashboard/home/CardStats";
+import { CreditCardPreview } from "~/components/partials/CreditCardPreview";
+import { Button } from "~/components/ui/button";
+import { requireUserSession } from "~/session";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { useRef } from "react";
 import {
   ArrowRight,
   AtSign,
@@ -15,7 +21,6 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { Form, NavLink, redirect, useNavigation } from "react-router";
-import { Button } from "~/components/ui/button";
 import { Calendar } from "~/components/ui/calendar-alt";
 import {
   Card,
@@ -33,7 +38,7 @@ import {
 } from "~/components/ui/popover";
 import { $api } from "~/lib/apiFetch";
 import { cn } from "~/lib/utils";
-import type { Route } from "./+types/registro";
+import type { Route } from "../+types/registro";
 import { toast } from "sonner";
 import { FetchError } from "ofetch";
 import {
@@ -45,7 +50,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-
+export async function loader({ request }: Route.LoaderArgs) {
+  // await requireUserSession(request);
+}
 export async function clientAction({ request }: Route.ClientActionArgs) {
   const body = await request.formData();
 
@@ -73,10 +80,9 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
     });
 
     toast.success("Usuario registrado correctamente", {
-      description: "Ahora puedes iniciar sesión",
+      description: "",
     });
-
-    return redirect("/login");
+    
   } catch (error) {
     if (error instanceof FetchError) {
       if (error.data) {
@@ -91,31 +97,27 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
     }
   }
 }
+export default function DashboardPage() {
 
-export default function RegistroPage() {
   const [date, setDate] = useState<Date>();
   const navigation = useNavigation();
+  const formRef = useRef<HTMLFormElement>(null);
 
   return (
-    <div className="flex flex-col items-center justify-center gap-12 h-screen p-4">
-      <div className="flex items-center gap-3 text-2xl">
-        <div className="bg-brand-blue p-2.5 text-brand-red">
-          <Landmark />
-        </div>
-        BanCuchus
-      </div>
-
-      <Card className="w-full lg:max-w-3xl pt-6 pb-5">
+    <main className="">
+      <section className="">
+      <div className="">
+        <Card className="">
         <CardHeader className="space-y-2">
           <CardTitle className="text-center text-xl font-bold">
-            Registrate
+            Registro de usuario
           </CardTitle>
           <CardDescription className="text-muted-foreground text-center">
-            Ingresa todos tus datos para registrarte y comenzar a usar BanCuchus
+            Ingresa todos los datos del usuario nuevo.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Form className="lg:px-6" method="POST">
+        <Form className="lg:px-6" method="POST" ref={formRef}>
             <h3 className="text-lg font-light my-3">Información personal</h3>
             <fieldset className="grid grid-cols-3 gap-y-2 gap-x-5 ">
               <Input
@@ -282,16 +284,10 @@ export default function RegistroPage() {
               </Button>
             </div>
           </Form>
-          <div className="mt-4 text-center">
-            <p className="text-sm">
-              Ya tienes una cuenta? &nbsp;
-              <NavLink to="/login" className="underline text-brand-blue">
-                Inicia sesión
-              </NavLink>
-            </p>
-          </div>
         </CardContent>
       </Card>
-    </div>
+       </div>
+      </section>
+    </main>
   );
 }

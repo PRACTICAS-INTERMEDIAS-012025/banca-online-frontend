@@ -1,7 +1,7 @@
 import {
   ArrowDownUp,
   BellRing,
-  LayoutGrid,
+  LayoutGrid,LayoutList,
   LogOut,
   MenuIcon,
   Settings2,
@@ -58,11 +58,23 @@ export async function action({ request }: Route.ActionArgs) {
 
 export default function DashboardLayout({ loaderData }: Route.ComponentProps) {
   const menuItems = [
-    { label: "Administración", icon: LayoutGrid, href: "/admin/inicio" },
+    { label: "Usuarios", icon: LayoutGrid, href: "/cajero/inicio" },
     {
-      label: "Usuarios",
-      icon: ArrowDownUp,
-      href: "/dashboard/transacciones",
+      label: "Solicitudes de Cuenta",
+      icon: LayoutGrid,
+      href: "/cajero/solicitudescuentas",
+    },{
+      label: "Historial de depositos",
+      icon: LayoutList,
+      href: "/cajero/depositodebito",
+    },{
+      label: "solicitudes de crédito",
+      icon: LayoutList,
+      href: "/cajero/promociones",
+    },{
+      label: "promociones",
+      icon: LayoutList,
+      href: "/cajero/promociones",
     },
   ];
 
