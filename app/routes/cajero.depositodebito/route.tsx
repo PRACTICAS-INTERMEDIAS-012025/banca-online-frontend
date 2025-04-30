@@ -1,18 +1,32 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "~/components/ui/card";
-import { DataTable } from "~/components/dashboard/home/DataTableTransaccion";
-import { SearchBar } from "~/components/dashboard/home/SearchBar";
-import type { Route } from "../admin.inicio/+types/route";
-import { requireUserSession } from "~/session";
+import { DataTable } from "~/components/dashboard/home/DataTableTransaccion"; // Verifica ruta
+import { SearchBar } from "~/components/dashboard/home/SearchBar"; // Verifica ruta
+import type { Route } from "../admin.inicio/+types/route"; // Verifica ruta si es necesaria
+import { requireUserSession } from "~/session"; // Verifica ruta
 import { Button } from "~/components/ui/button";
+import { $api } from "~/lib/apiFetch"; // Verifica ruta
+import { Loader2 } from 'lucide-react';
 
+// Interfaz para la estructura de datos que usa el DataTable
 interface Transaccion {
   id: number;
-  fecha: string;
+  fecha: string; // ISO String date
   monto: number;
   cuentaOrigen: string;
   cuentaDestino: string;
   tipo_transaccion: string;
+}
+
+// Interfaz para la estructura de datos COMO VIENE DE LA API
+interface RawTransaccion {
+  id: number;
+  fecha?: string | Date | null;
+  monto: number;
+  cuenta1?: number | string | null;
+  cuenta2?: number | string | null;
+  tipo_transaccion?: number | string | null;
+  [key: string]: any;
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -21,86 +35,97 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export default function TransactionsPage() {
+  // --- Estados ---
   const [searchTerm, setSearchTerm] = React.useState("");
   const [data, setData] = React.useState<Transaccion[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
+  // --- Manejar búsqueda ---
   const handleSearch = (term: string) => {
     setSearchTerm(term);
   };
 
-  const fetchTransacciones = async () => {
+  // --- Función para cargar datos (usa $api) ---
+  const fetchTransacciones = React.useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      
-      const response = await fetch('http://localhost:3003/transaccion/');
-      
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      const rawTransacciones = await $api<RawTransaccion[]>('/transaccion/');
+
+      if (!Array.isArray(rawTransacciones)) {
+         console.error("API did not return an array for transactions.");
+         throw new Error("Formato de respuesta inesperado de la API.");
       }
-      
-      const transacciones = await response.json();
-      
-      const normalizedData = transacciones.map((t: any) => ({
-        ...t,
-        cuentaOrigen: t.cuenta1?.toString() || '',
-        cuentaDestino: t.cuenta2?.toString() || '',
-        fecha: t.fecha ? new Date(t.fecha).toISOString() : '',
-        tipo_transaccion: t.tipo_transaccion?.toString() || ''
+
+      const normalizedData = rawTransacciones.map((t): Transaccion => ({
+        id: t.id,
+        monto: t.monto,
+        cuentaOrigen: String(t.cuenta1 ?? 'N/A'),
+        cuentaDestino: String(t.cuenta2 ?? 'N/A'),
+        fecha: t.fecha ? new Date(t.fecha).toISOString() : new Date(0).toISOString(),
+        tipo_transaccion: String(t.tipo_transaccion ?? 'Desconocido'),
       }));
-      
+
       setData(normalizedData);
+
     } catch (err) {
-      console.error("Error fetching transactions:", err);
-      setError(err instanceof Error ? err.message : "Error desconocido");
+      const errorMessage = err instanceof Error ? err.message : "Error desconocido al cargar transacciones";
+      setError(errorMessage);
+      console.error("Error fetching transactions via $api:", err);
+      setData([]);
     } finally {
       setLoading(false);
     }
-  };
-
-  React.useEffect(() => {
-    fetchTransacciones();
   }, []);
 
+  // --- Cargar datos al montar ---
+  React.useEffect(() => {
+    fetchTransacciones();
+  }, [fetchTransacciones]);
+
+  // --- Filtrar datos ---
   const filteredData = data.filter(item => {
     const searchTermLower = searchTerm.toLowerCase();
     return (
-      item.cuentaOrigen.toLowerCase().includes(searchTermLower) ||
-      item.cuentaDestino.toLowerCase().includes(searchTermLower) ||
-      item.tipo_transaccion.toLowerCase().includes(searchTermLower) ||
-      item.fecha.toLowerCase().includes(searchTermLower)
+      item.cuentaOrigen?.toLowerCase().includes(searchTermLower) ||
+      item.cuentaDestino?.toLowerCase().includes(searchTermLower) ||
+      item.tipo_transaccion?.toLowerCase().includes(searchTermLower) ||
+      item.fecha?.toLowerCase().includes(searchTermLower) ||
+      item.monto?.toString().includes(searchTerm)
     );
   });
 
+  // --- Renderizado ---
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">Cargando transacciones...</p>
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="ml-2 text-muted-foreground">Cargando transacciones...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-red-500">{error}</p>
-        <Button 
-          variant="outline" 
-          onClick={fetchTransacciones}
-          className="ml-4"
-        >
-          Reintentar
-        </Button>
-      </div>
+       <div className="flex flex-col items-center justify-center h-64 text-center">
+         <p className="text-red-600 font-semibold">Error al cargar transacciones:</p>
+         <p className="text-red-500 mt-1">{error}</p>
+         <Button
+           variant="outline"
+           onClick={fetchTransacciones}
+           className="mt-4"
+         >
+           Reintentar
+         </Button>
+       </div>
     );
   }
 
   return (
-    <main className="">
+    <main className="p-4 md:p-6 lg:p-8">
       <section>
-        <Card className="">
+        <Card>
           <CardHeader className="space-y-2">
             <CardTitle className="text-center text-xl font-bold">
               Historial de Transacciones
@@ -110,9 +135,24 @@ export default function TransactionsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <h3 className="text-lg font-semibold mb-4">Filtrar Transacciones</h3>
-            <SearchBar onSearch={handleSearch} />
-            <DataTable data={filteredData} />
+            <div className="mb-6">
+               <h3 className="text-lg font-semibold mb-2">Filtrar Transacciones</h3>
+               {/* ***** CORRECCIÓN AQUÍ: Se eliminó la prop placeholder ***** */}
+               <SearchBar
+                 onSearch={handleSearch}
+                 // Si necesitas un placeholder, añádelo directamente en el <Input>
+                 // dentro del componente SearchBar.tsx, o modifica SearchBar
+                 // para que acepte esta prop.
+               />
+            </div>
+
+            {filteredData.length === 0 ? (
+                <div className="text-center py-10 text-muted-foreground">
+                    {searchTerm ? `No se encontraron transacciones que coincidan con "${searchTerm}".` : "No hay transacciones registradas."}
+                </div>
+            ) : (
+                <DataTable data={filteredData} />
+            )}
           </CardContent>
         </Card>
       </section>
